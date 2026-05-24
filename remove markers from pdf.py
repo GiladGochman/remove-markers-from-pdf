@@ -54,7 +54,7 @@ def remove_yellow_highlight(img):
     
     return Image.fromarray(new_img.astype(np.uint8))
 
-def process_pdf(input_path):
+def process_pdf(input_path, output_dir=None):
     """
     Process a PDF and save the result in a matching folder.
     """
@@ -72,7 +72,10 @@ def process_pdf(input_path):
         return False
     
     # Create the output folder.
-    output_dir = input_path.parent / "exams with answers removed"
+    if output_dir is None:
+        output_dir = input_path.parent / "exams with answers removed"
+    else:
+        output_dir = Path(output_dir)
     output_dir.mkdir(exist_ok=True)
     
     # Create the output file name.
@@ -118,9 +121,10 @@ def launch_gui():
     root = tk.Tk()
     root.title("Remove Yellow Marks from PDF")
     root.resizable(False, False)
-    root.geometry("520x180")
+    root.geometry("620x240")
 
     selected_file = tk.StringVar(value="No file selected")
+    selected_output_dir = tk.StringVar(value="Default: output next to the source PDF")
     status_text = tk.StringVar(value="Choose a PDF to begin.")
 
     frame = tk.Frame(root, padx=16, pady=16)
@@ -131,6 +135,12 @@ def launch_gui():
 
     file_label = tk.Label(frame, textvariable=selected_file, wraplength=480, justify="left")
     file_label.pack(anchor="w", pady=(12, 8))
+
+    output_label_title = tk.Label(frame, text="Output folder:", font=("Segoe UI", 10, "bold"))
+    output_label_title.pack(anchor="w")
+
+    output_label = tk.Label(frame, textvariable=selected_output_dir, wraplength=560, justify="left")
+    output_label.pack(anchor="w", pady=(2, 8))
 
     button_row = tk.Frame(frame)
     button_row.pack(anchor="w", pady=(0, 10))
@@ -144,6 +154,18 @@ def launch_gui():
             selected_file.set(file_path)
             status_text.set("Ready to process the selected file.")
 
+    def choose_output_folder():
+        folder_path = filedialog.askdirectory(title="Select the output folder")
+        if folder_path:
+            selected_output_dir.set(folder_path)
+            status_text.set("Output folder updated for this session.")
+
+    def get_output_folder_for_processing(file_path):
+        current_output = selected_output_dir.get()
+        if current_output == "Default: output next to the source PDF":
+            return None
+        return current_output
+
     def run_processing():
         file_path = selected_file.get()
         if file_path == "No file selected":
@@ -152,7 +174,7 @@ def launch_gui():
 
         status_text.set("Processing...")
         root.update_idletasks()
-        success = process_pdf(file_path)
+        success = process_pdf(file_path, get_output_folder_for_processing(file_path))
         if success:
             status_text.set("Done. The output file was created successfully.")
             messagebox.showinfo("Finished", "The output PDF was created successfully.")
@@ -162,6 +184,9 @@ def launch_gui():
 
     browse_button = tk.Button(button_row, text="Browse...", command=browse_file, width=12)
     browse_button.pack(side="left")
+
+    output_button = tk.Button(button_row, text="Choose Output Folder...", command=choose_output_folder, width=20)
+    output_button.pack(side="left", padx=(10, 0))
 
     process_button = tk.Button(button_row, text="Remove Marks", command=run_processing, width=14)
     process_button.pack(side="left", padx=(10, 0))

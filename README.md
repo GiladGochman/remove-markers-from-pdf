@@ -4,6 +4,9 @@ This program was made to modify solved multiple-choice exams to remove any way o
 
 Run the script without arguments to open a lightweight file picker GUI.
 
+In the GUI, you can also choose a custom output folder for the current session.
+If you do not pick one, the result will be saved next to the source PDF in a folder named "exams with answers removed".
+
 If you prefer the command line, run:
 
 "remove markers from pdf.py" "[path to the PDF containing the marked answers]"
