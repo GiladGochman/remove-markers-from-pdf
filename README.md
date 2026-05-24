@@ -1,8 +1,11 @@
 # remove-markers-from-pdf
+
 This program was made to modify solved multiple-choice exams to remove any way of knowing the correct answer before it is needed. This could help students to prepare for exams.
 
-to use run in cmd:
+Run the script without arguments to open a lightweight file picker GUI.
 
-"remove markers from pdf.py" "[path to pdf containing the marked answers]"
+If you prefer the command line, run:
 
-the result will be saved in a folder "exams with answers removed" that is located in the oringinal pdf's folder
+"remove markers from pdf.py" "[path to the PDF containing the marked answers]"
+
+The result will be saved in a folder named "exams with answers removed" inside the original PDF's folder.
